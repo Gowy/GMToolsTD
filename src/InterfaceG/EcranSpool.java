@@ -64,9 +64,13 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
     private String textCurrentSumValue;
     private String textRealSumValue;
     private String textSkewFactorValue;
+    private String textMaxCurrentSumValue = "";
+    private String textMaxRealSumValue = "";
+    private String textMaxSkewFactorValue = "";
     private String[][] tabTextSpoolDetValue;
     private String[][] tabTextSpoolDetAggValue;
     private int compteurIter = 0;
+    SpoolUsage maxSpoolUsageSum;
 
     private GridData gridData;
     final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -354,10 +358,12 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
                     activatedContents();
                     return;
                 }
+
                 majDateText(textSpoolInfoStart);
                 majDateText(textSpoolInfoCurrent);
                 textSpoolInfoIter.setText(compteurIter+"");
                 majInformation(ecranPrincipal.MESSAGE_INFORMATION,"Start");
+                maxSpoolUsageSum = new SpoolUsage(0.0,0.0,0.0);
                 new Thread(new Runnable() {
                     public void run() {
                         while (thSpoolActive) {
@@ -368,9 +374,15 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
 
                             try {
                                 spoolUsageSum = ecranPrincipal.getTdConnexion().requestSpoolSum(textSpoolUserValue);
-                                textCurrentSumValue = spoolUsageSum.formatSpoolWithSize(spoolUsageSum.getCurrentSpoolSum(),sizeValueSumSpool) + " " +sizeValueSumSpool;
-                                textRealSumValue = spoolUsageSum.formatSpoolWithSize(spoolUsageSum.getRealSpoolSum(),sizeValueSumSpool) + " " + sizeValueSumSpool;
-                                textSkewFactorValue = spoolUsageSum.getSkewFactor() + " %";
+                                textCurrentSumValue = spoolUsageSum.formatSpoolWithSize(spoolUsageSum.getCurrentSpoolSum(),sizeValueSumSpool);
+                                textRealSumValue = spoolUsageSum.formatSpoolWithSize(spoolUsageSum.getRealSpoolSum(),sizeValueSumSpool);
+                                textSkewFactorValue = spoolUsageSum.getSkewFactor()+"";
+
+                                maxSpoolUsageSum = maxSpoolUsageSum.returnMaxSpoolSum(spoolUsageSum);
+
+                                textMaxCurrentSumValue = maxSpoolUsageSum.formatSpoolWithSize(maxSpoolUsageSum.getCurrentSpoolSum(),sizeValueSumSpool);
+                                textMaxRealSumValue = maxSpoolUsageSum.formatSpoolWithSize(maxSpoolUsageSum.getRealSpoolSum(),sizeValueSumSpool);
+                                textMaxSkewFactorValue = maxSpoolUsageSum.getSkewFactor()+"";
 
                                 List<SpoolUsage> listSU;
                                 listSU = ecranPrincipal.getTdConnexion().requestSpoolDet(textSpoolUserValue);
@@ -392,11 +404,11 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
 
                                 for (int i = 0; i < nbrAMP; i++) {
                                     tabTextSpoolDetValue[0][i] = listSU.get(i).getVproc().toString();
-                                    tabTextSpoolDetValue[1][i] = listSU.get(i).formatSpoolWithSize(listSU.get(i).getCurrentSpool(), sizeValueSpool) + " " + sizeValueSpool;
-                                    tabTextSpoolDetValue[2][i] = listSU.get(i).formatSpoolWithSize(listSU.get(i).getMaxProfileSpool(), sizeValueSpool) + " " + sizeValueSpool;
+                                    tabTextSpoolDetValue[1][i] = listSU.get(i).formatSpoolWithSize(listSU.get(i).getCurrentSpool(), sizeValueSpool);
+                                    tabTextSpoolDetValue[2][i] = listSU.get(i).formatSpoolWithSize(listSU.get(i).getMaxProfileSpool(), sizeValueSpool) ;
                                     tabTextSpoolDetAggValue[0][i] = AggTextSpoolDet.get(i).getVproc().toString();
-                                    tabTextSpoolDetAggValue[1][i] = AggTextSpoolDet.get(i).formatSpoolWithSize(AggTextSpoolDet.get(i).getCurrentSpool(), sizeValueSpool) + " " + sizeValueSpool;
-                                    tabTextSpoolDetAggValue[2][i] = AggTextSpoolDet.get(i).formatSpoolWithSize(AggTextSpoolDet.get(i).getMaxProfileSpool(), sizeValueSpool) + " " + sizeValueSpool;
+                                    tabTextSpoolDetAggValue[1][i] = AggTextSpoolDet.get(i).formatSpoolWithSize(AggTextSpoolDet.get(i).getCurrentSpool(), sizeValueSpool);
+                                    tabTextSpoolDetAggValue[2][i] = AggTextSpoolDet.get(i).formatSpoolWithSize(AggTextSpoolDet.get(i).getMaxProfileSpool(), sizeValueSpool);
                                 }
 
                             } catch (SQLException err) {
@@ -413,17 +425,21 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
 
                                     if (!thSpoolActive || textCurrentSum.isDisposed()) { thSpoolActive = false; return ; }
 
-                                    textCurrentSum.setText(textCurrentSumValue);
-                                    textRealSum.setText(textRealSumValue);
-                                    textSkewFactor.setText(textSkewFactorValue);
+                                    textCurrentSum.setText(textCurrentSumValue + " " + sizeValueSumSpool);
+                                    textRealSum.setText(textRealSumValue + " " + sizeValueSumSpool);
+                                    textSkewFactor.setText(textSkewFactorValue + " %");
+
+                                    textMaxCurrentSum.setText(textMaxCurrentSumValue + " " + sizeValueSumSpool);
+                                    textMaxRealSum.setText(textMaxRealSumValue + " " + sizeValueSumSpool);
+                                    textMaxSkewFactor.setText(textMaxSkewFactorValue + " %");
 
                                     for (int i = 0; i < nbrAMP; i++) {
                                         tabTextSpoolDet[0][i].setText(tabTextSpoolDetValue[0][i]);
-                                        tabTextSpoolDet[1][i].setText(tabTextSpoolDetValue[1][i]);
-                                        tabTextSpoolDet[2][i].setText(tabTextSpoolDetValue[2][i]);
+                                        tabTextSpoolDet[1][i].setText(tabTextSpoolDetValue[1][i] + " " + sizeValueSpool);
+                                        tabTextSpoolDet[2][i].setText(tabTextSpoolDetValue[2][i] + " " + sizeValueSpool);
                                         tabTextSpoolDetAgg[0][i].setText(tabTextSpoolDetAggValue[0][i]);
-                                        tabTextSpoolDetAgg[1][i].setText(tabTextSpoolDetAggValue[1][i]);
-                                        tabTextSpoolDetAgg[2][i].setText(tabTextSpoolDetAggValue[2][i]);
+                                        tabTextSpoolDetAgg[1][i].setText(tabTextSpoolDetAggValue[1][i] + " " + sizeValueSpool);
+                                        tabTextSpoolDetAgg[2][i].setText(tabTextSpoolDetAggValue[2][i] + " " + sizeValueSpool);
                                     }
 
                                     majDateText(textSpoolInfoCurrent);
@@ -449,6 +465,7 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
                 btnStopSpool.setEnabled(true);
                 textSpoolUser.setEnabled(false);
                 textSpoolFreq.setEnabled(false);
+                btnRadioSizeTo.setEnabled(false);
                 btnRadioSizeGo.setEnabled(false);
                 btnRadioSizeMo.setEnabled(false);
                 btnRadioSizeKo.setEnabled(false);
@@ -473,9 +490,16 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
                 textCurrentSum.setText("");
                 textRealSum.setText("");
                 textSkewFactor.setText("");
+                textMaxCurrentSum.setText("");
+                textMaxRealSum.setText("");
+                textMaxSkewFactor.setText("");
                 textSpoolInfoStart.setText("");
                 textSpoolInfoCurrent.setText("");
                 textSpoolInfoIter.setText("");
+
+                textMaxCurrentSumValue = "";
+                textMaxRealSumValue = "";
+                textMaxSkewFactorValue = "";
 
                 int nbrAMP = ecranPrincipal.getNumberAmps();
                 for (int i = 0; i < nbrAMP; i++) {
@@ -647,9 +671,17 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
         textCurrentSum.setText("");
         textRealSum.setText("");
         textSkewFactor.setText("");
+        textMaxCurrentSum.setText("");
+        textMaxRealSum.setText("");
+        textMaxSkewFactor.setText("");
         textSpoolInfoStart.setText("");
         textSpoolInfoCurrent.setText("");
         textSpoolInfoIter.setText("");
+
+        textMaxCurrentSumValue = "";
+        textMaxRealSumValue = "";
+        textMaxSkewFactorValue = "";
+
 
         ScrollCompSpoolDetail.dispose();
         ScrollCompSpoolDetailAgg.dispose();

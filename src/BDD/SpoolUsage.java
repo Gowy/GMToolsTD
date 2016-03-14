@@ -141,6 +141,24 @@ public class SpoolUsage {
 
 
     /**
+     * returnMaxSpoolSum is used to get the max of summary data between two SpoolUsage object
+     * @param su SpoolUsage object to compare with the current instance
+     * @return max summary data of the SpoolUsage
+     */
+    public SpoolUsage returnMaxSpoolSum( SpoolUsage su) {
+        Double tmpCurrentSpoolSum;
+        Double tmpRealSpoolSum;
+        Double tmpSkewFactor;
+
+        if (su.getCurrentSpoolSum() > this.currentSpoolSum) { tmpCurrentSpoolSum = su.getCurrentSpoolSum(); } else { tmpCurrentSpoolSum = this.currentSpoolSum; }
+        if (su.getRealSpoolSum() > this.realSpoolSum) { tmpRealSpoolSum = su.getRealSpoolSum(); } else { tmpRealSpoolSum = this.realSpoolSum; }
+        if (su.getSkewFactor() > this.skewFactor) { tmpSkewFactor = su.getSkewFactor(); } else { tmpSkewFactor = this.skewFactor; }
+
+        return new SpoolUsage(tmpCurrentSpoolSum, tmpRealSpoolSum, tmpSkewFactor);
+    }
+
+
+    /**
      * main is used to test the Class SpoolUsage
      * @param args args of the test
      */
