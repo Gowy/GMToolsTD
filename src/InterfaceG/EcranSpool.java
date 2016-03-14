@@ -26,8 +26,12 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
     private Group groupSpool;
     private Group groupSpoolSum;
     private Text textCurrentSum;
-    private Text textMaxSum;
-    private Text textMinSum;
+    private Text textRealSum;
+    private Text textSkewFactor;
+
+    private Text textMaxCurrentSum;
+    private Text textMaxRealSum;
+    private Text textMaxSkewFactor;
 
     //ecran spool detail
     private Group groupSpoolDetail;
@@ -42,6 +46,7 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
     private Button btnStartSpool;
     private Button btnStopSpool;
     private Button btnResetSpool;
+    private Button btnRadioSizeTo;
     private Button btnRadioSizeGo;
     private Button btnRadioSizeMo;
     private Button btnRadioSizeKo;
@@ -57,8 +62,8 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
     private Integer freqCalcSpool = 5;
     private String textSpoolUserValue;
     private String textCurrentSumValue;
-    private String textMaxSumValue;
-    private String textMinSumValue;
+    private String textRealSumValue;
+    private String textSkewFactorValue;
     private String[][] tabTextSpoolDetValue;
     private String[][] tabTextSpoolDetAggValue;
     private int compteurIter = 0;
@@ -153,37 +158,67 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
         gridData = new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1);
         lblCurrent.setLayoutData(gridData);
 
-        Label lblMax = new Label(groupSpoolSum, SWT.NONE);
-        lblMax.setText("Max");
+        Label lblReal = new Label(groupSpoolSum, SWT.NONE);
+        lblReal.setText("Real");
         gridData = new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1);
-        lblMax.setLayoutData(gridData);
+        lblReal.setLayoutData(gridData);
 
-        Label lblMin = new Label(groupSpoolSum, SWT.NONE);
-        lblMin.setText("Min");
+        Label lblSkewFactor = new Label(groupSpoolSum, SWT.NONE);
+        lblSkewFactor.setText("Skew");
         gridData = new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1);
-        lblMin.setLayoutData(gridData);
+        lblSkewFactor.setLayoutData(gridData);
 
         textCurrentSum = new Text(groupSpoolSum, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
         gridData = new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1);
         gridData.widthHint = 100;
         textCurrentSum.setLayoutData(gridData);
 
-        textMaxSum = new Text(groupSpoolSum, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
+        textRealSum = new Text(groupSpoolSum, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
         gridData = new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1);
         gridData.widthHint = 100;
-        textMaxSum.setLayoutData(gridData);
+        textRealSum.setLayoutData(gridData);
 
-        textMinSum = new Text(groupSpoolSum, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
+        textSkewFactor = new Text(groupSpoolSum, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
         gridData = new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1);
         gridData.widthHint = 100;
-        textMinSum.setLayoutData(gridData);
+        textSkewFactor.setLayoutData(gridData);
 
+
+        Label lblMaxCurrent = new Label(groupSpoolSum, SWT.NONE);
+        lblMaxCurrent.setText("MaxCurrent");
+        gridData = new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1);
+        lblMaxCurrent.setLayoutData(gridData);
+
+        Label lblMaxReal = new Label(groupSpoolSum, SWT.NONE);
+        lblMaxReal.setText("MaxReal");
+        gridData = new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1);
+        lblMaxReal.setLayoutData(gridData);
+
+        Label lblMaxSkewFactor = new Label(groupSpoolSum, SWT.NONE);
+        lblMaxSkewFactor.setText("MaxSkew");
+        gridData = new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1);
+        lblMaxSkewFactor.setLayoutData(gridData);
+
+        textMaxCurrentSum = new Text(groupSpoolSum, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
+        gridData = new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1);
+        gridData.widthHint = 100;
+        textMaxCurrentSum.setLayoutData(gridData);
+
+        textMaxRealSum = new Text(groupSpoolSum, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
+        gridData = new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1);
+        gridData.widthHint = 100;
+        textMaxRealSum.setLayoutData(gridData);
+
+        textMaxSkewFactor = new Text(groupSpoolSum, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
+        gridData = new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1);
+        gridData.widthHint = 100;
+        textMaxSkewFactor.setLayoutData(gridData);
 
 
 
         Group groupSpoolOption = new Group(groupSpool, SWT.NONE);
         groupSpoolOption.setText("Option");
-        groupSpoolOption.setLayout(new GridLayout(4,false));
+        groupSpoolOption.setLayout(new GridLayout(5,false));
         groupSpoolOption.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
 
 
@@ -191,33 +226,42 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
         labSpoolUser.setText("User :");
         labSpoolUser.setLayoutData(new GridData(SWT.LEFT,SWT.CENTER,false,false,1,1));
         textSpoolUser = new Text(groupSpoolOption, SWT.BORDER);
-        textSpoolUser.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false,3,1));
+        textSpoolUser.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false,4,1));
         textSpoolUser.setEnabled(false);
 
         Label labSpoolFreq = new Label(groupSpoolOption, SWT.NONE);
         labSpoolFreq.setText("Sleep (s):");
         labSpoolFreq.setLayoutData(new GridData(SWT.LEFT,SWT.CENTER,false,false,2,1));
         textSpoolFreq = new Text(groupSpoolOption, SWT.BORDER);
-        textSpoolFreq.setLayoutData(new GridData(SWT.LEFT,SWT.CENTER,false,false,2,1));
+        textSpoolFreq.setLayoutData(new GridData(SWT.LEFT,SWT.CENTER,false,false,3,1));
         textSpoolFreq.setEnabled(false);
 
         Label lblSize = new Label(groupSpoolOption, SWT.NONE);
         lblSize.setText("Size :");
         lblSize.setLayoutData(new GridData(SWT.RIGHT,SWT.CENTER,false,false,1,1));
 
+
+        btnRadioSizeTo = new Button(groupSpoolOption, SWT.RADIO);
+        btnRadioSizeTo.setEnabled(false);
+        btnRadioSizeTo.setSelection(false);
+        btnRadioSizeTo.setBounds(163, 20, 42, 16);
+        btnRadioSizeTo.setText("To");
+
+
         btnRadioSizeGo = new Button(groupSpoolOption, SWT.RADIO);
         btnRadioSizeGo.setEnabled(false);
-        btnRadioSizeGo.setSelection(false);
+        btnRadioSizeGo.setSelection(true);
         btnRadioSizeGo.setBounds(163, 20, 42, 16);
         btnRadioSizeGo.setText("Go");
+        sizeValueSpool = "Mo";
+        sizeValueSumSpool = "Go";
 
         btnRadioSizeMo = new Button(groupSpoolOption, SWT.RADIO);
         btnRadioSizeMo.setEnabled(false);
-        btnRadioSizeMo.setSelection(true);
+        btnRadioSizeMo.setSelection(false);
         btnRadioSizeMo.setBounds(211, 21, 42, 16);
         btnRadioSizeMo.setText("Mo");
-        sizeValueSpool = "Mo";
-        sizeValueSumSpool = "Go";
+
 
         btnRadioSizeKo = new Button(groupSpoolOption, SWT.RADIO);
         btnRadioSizeKo.setEnabled(false);
@@ -325,8 +369,8 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
                             try {
                                 spoolUsageSum = ecranPrincipal.getTdConnexion().requestSpoolSum(textSpoolUserValue);
                                 textCurrentSumValue = spoolUsageSum.formatSpoolWithSize(spoolUsageSum.getCurrentSpoolSum(),sizeValueSumSpool) + " " +sizeValueSumSpool;
-                                textMaxSumValue = spoolUsageSum.formatSpoolWithSize(spoolUsageSum.getMaxSpoolSum(),sizeValueSpool) + " " + sizeValueSpool;
-                                textMinSumValue = spoolUsageSum.formatSpoolWithSize(spoolUsageSum.getMinSpoolSum(),sizeValueSpool) + " " + sizeValueSpool;
+                                textRealSumValue = spoolUsageSum.formatSpoolWithSize(spoolUsageSum.getRealSpoolSum(),sizeValueSumSpool) + " " + sizeValueSumSpool;
+                                textSkewFactorValue = spoolUsageSum.getSkewFactor() + " %";
 
                                 List<SpoolUsage> listSU;
                                 listSU = ecranPrincipal.getTdConnexion().requestSpoolDet(textSpoolUserValue);
@@ -370,8 +414,8 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
                                     if (!thSpoolActive || textCurrentSum.isDisposed()) { thSpoolActive = false; return ; }
 
                                     textCurrentSum.setText(textCurrentSumValue);
-                                    textMaxSum.setText(textMaxSumValue);
-                                    textMinSum.setText(textMinSumValue);
+                                    textRealSum.setText(textRealSumValue);
+                                    textSkewFactor.setText(textSkewFactorValue);
 
                                     for (int i = 0; i < nbrAMP; i++) {
                                         tabTextSpoolDet[0][i].setText(tabTextSpoolDetValue[0][i]);
@@ -393,6 +437,7 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
                                 try {
                                     Thread.sleep(freqCalcSpool * 1000);
                                 } catch (Exception e) {
+                                    //nothing to do here
                                 }
                             }
                         }
@@ -426,8 +471,8 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
             public void widgetSelected(SelectionEvent e) {
                 majInformation(ecranPrincipal.MESSAGE_INFORMATION,"Reset");
                 textCurrentSum.setText("");
-                textMaxSum.setText("");
-                textMinSum.setText("");
+                textRealSum.setText("");
+                textSkewFactor.setText("");
                 textSpoolInfoStart.setText("");
                 textSpoolInfoCurrent.setText("");
                 textSpoolInfoIter.setText("");
@@ -448,10 +493,12 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
             }
         });
 
-        btnRadioSizeGo.addSelectionListener(new SelectionAdapter() {
+
+        btnRadioSizeTo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                btnRadioSizeGo.setSelection(true);
+                btnRadioSizeTo.setSelection(true);
+                btnRadioSizeGo.setSelection(false);
                 btnRadioSizeMo.setSelection(false);
                 btnRadioSizeKo.setSelection(false);
                 sizeValueSpool = "Go";
@@ -459,25 +506,40 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
             }
         });
 
-        btnRadioSizeMo.addSelectionListener(new SelectionAdapter() {
+
+        btnRadioSizeGo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                btnRadioSizeGo.setSelection(false);
-                btnRadioSizeMo.setSelection(true);
+                btnRadioSizeTo.setSelection(false);
+                btnRadioSizeGo.setSelection(true);
+                btnRadioSizeMo.setSelection(false);
                 btnRadioSizeKo.setSelection(false);
                 sizeValueSpool = "Mo";
                 sizeValueSumSpool = "Go";
             }
         });
 
+        btnRadioSizeMo.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                btnRadioSizeTo.setSelection(false);
+                btnRadioSizeGo.setSelection(false);
+                btnRadioSizeMo.setSelection(true);
+                btnRadioSizeKo.setSelection(false);
+                sizeValueSpool = "Ko";
+                sizeValueSumSpool = "Mo";
+            }
+        });
+
         btnRadioSizeKo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
+                btnRadioSizeTo.setSelection(false);
                 btnRadioSizeGo.setSelection(false);
                 btnRadioSizeMo.setSelection(false);
                 btnRadioSizeKo.setSelection(true);
-                sizeValueSpool = "Ko";
-                sizeValueSumSpool = "Mo";
+                sizeValueSpool = "o";
+                sizeValueSumSpool = "Ko";
             }
         });
 
@@ -568,6 +630,7 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
         btnResetSpool.setEnabled(true);
         textSpoolUser.setEnabled(true);
         textSpoolFreq.setEnabled(true);
+        btnRadioSizeTo.setEnabled(true);
         btnRadioSizeGo.setEnabled(true);
         btnRadioSizeMo.setEnabled(true);
         btnRadioSizeKo.setEnabled(true);
@@ -582,8 +645,8 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
         textSpoolUser.setText("");
         textSpoolFreq.setText("");
         textCurrentSum.setText("");
-        textMaxSum.setText("");
-        textMinSum.setText("");
+        textRealSum.setText("");
+        textSkewFactor.setText("");
         textSpoolInfoStart.setText("");
         textSpoolInfoCurrent.setText("");
         textSpoolInfoIter.setText("");
@@ -596,6 +659,7 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
         btnResetSpool.setEnabled(false);
         textSpoolUser.setEnabled(false);
         textSpoolFreq.setEnabled(false);
+        btnRadioSizeTo.setEnabled(false);
         btnRadioSizeGo.setEnabled(false);
         btnRadioSizeMo.setEnabled(false);
         btnRadioSizeKo.setEnabled(false);

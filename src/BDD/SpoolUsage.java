@@ -14,8 +14,8 @@ public class SpoolUsage {
     private Double maxProfileSpool = 0.0;
 
     private Double currentSpoolSum = 0.0;
-    private Double maxSpoolSum = 0.0;
-    private Double minSpoolSum = 0.0;
+    private Double realSpoolSum = 0.0;
+    private Double skewFactor = 0.0;
 
     private Double divTo = (1000.0*1000*1000*1000);
     private Double divGo = (1000.0*1000*1000);
@@ -39,13 +39,13 @@ public class SpoolUsage {
     /**
      * Constructor of the Class SpoolUsage for Summary Data
      * @param currentSpoolSum Sum of the CurrentSpool from Teradata
-     * @param maxSpoolSum Max of the CurrentSpool from Teradata
-     * @param minSpoolSum Min of the CurrentSpool from Teradata
+     * @param realSpoolSum Max(currentspool) * max(vproc)+1 from Teradata
+     * @param skewFactor skewFactor of the CurrentSpool from Teradata
      */
-    public SpoolUsage (Double currentSpoolSum, Double maxSpoolSum, Double minSpoolSum) {
+    public SpoolUsage (Double currentSpoolSum, Double realSpoolSum, Double skewFactor) {
         this.currentSpoolSum = currentSpoolSum;
-        this.maxSpoolSum = maxSpoolSum;
-        this.minSpoolSum = minSpoolSum;
+        this.realSpoolSum = realSpoolSum;
+        this.skewFactor = skewFactor;
     }
 
     /**
@@ -81,19 +81,19 @@ public class SpoolUsage {
     }
 
     /**
-     * getMaxSpoolSum is used to get the Max of all the AMP's CurrentSpool Value
-     * @return Max of all the AMP's CurrentSpool Value
+     * getRealSpoolSum is used to get the real spool of all the AMP's CurrentSpool Value
+     * @return Max(currentspool) * max(vproc)+1 Value
      */
-    public Double getMaxSpoolSum () {
-        return maxSpoolSum;
+    public Double getRealSpoolSum () {
+        return realSpoolSum;
     }
 
     /**
-     * getMinSpoolSum is used to get the Min of all the AMP's CurrentSpool Value
-     * @return Min of all the AMP's CurrentSpool Value
+     * getSkewFactor is used to get the skew factor of all the AMP's CurrentSpool Value
+     * @return skew factor of all the AMP's CurrentSpool Value
      */
-    public Double getMinSpoolSum () {
-        return minSpoolSum;
+    public Double getSkewFactor () {
+        return skewFactor;
     }
 
     /**

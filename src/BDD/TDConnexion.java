@@ -51,7 +51,7 @@ public class TDConnexion {
             try {
                 teradata.close();
             } catch (SQLException e) {
-
+                //nothing to do here
             }
         }
     }
@@ -98,9 +98,9 @@ public class TDConnexion {
         ResultSet rs = null;
         String base = config.getValueConf(config.V_DISKSPACE);
         try {
-            String query="select cast(sum(currentspool) as decimal(20,2)) " +
-                    ",cast(max(currentspool) as decimal(20,2)) " +
-                    ",cast(min(currentspool) as decimal(20,2)) " +
+            String query="select cast(sum(currentspool) as decimal(20,2)) as SumCurrentSpool " +
+                    ",cast(max(currentspool)*(max(vproc)+1) as decimal(20,2)) as SumRealSpool " +
+                    ",cast(case when max(currentspool) > 0 then (100 - (avg(currentspool)/MAX(currentspool)*100)) else 0 end as decimal(3,0)) as SkewFactor   " +
                     "from "+base+" " +
                     "where upper(databasename) = upper('"+user+"');";
 
