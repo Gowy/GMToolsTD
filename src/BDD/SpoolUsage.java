@@ -133,8 +133,8 @@ public class SpoolUsage {
         Double tmpCurrentSpool;
         Double tmpMaxProfileSpool;
 
-        if (su.getCurrentSpool() > this.currentSpoolSum) { tmpCurrentSpool = su.getCurrentSpool(); } else { tmpCurrentSpool = this.currentSpool; }
-        if (su.getMaxProfileSpool() > this.currentSpoolSum) { tmpMaxProfileSpool = su.getMaxProfileSpool(); } else { tmpMaxProfileSpool = this.maxProfileSpool; }
+        if (su.getCurrentSpool() > this.currentSpool) { tmpCurrentSpool = su.getCurrentSpool(); } else { tmpCurrentSpool = this.currentSpool; }
+        if (su.getMaxProfileSpool() > this.maxProfileSpool) { tmpMaxProfileSpool = su.getMaxProfileSpool(); } else { tmpMaxProfileSpool = this.maxProfileSpool; }
 
         return new SpoolUsage(this.vproc, tmpCurrentSpool, tmpMaxProfileSpool);
     }

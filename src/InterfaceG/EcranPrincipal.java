@@ -212,7 +212,7 @@ public class EcranPrincipal {
         // renseignement des informations provenant de config
         textServer.setText(conf.getValueConf(conf.SERVER_TD));
         textUsername.setText(conf.getValueConf(conf.USERNAME_TD));
-        textPassword.setText("SgTeradata.4");
+        textPassword.setText("");
 
 
         mntmSpoolUsage.addSelectionListener(new SelectionAdapter() {
@@ -354,18 +354,23 @@ public class EcranPrincipal {
         // update of the information message (log)
         new Thread(new Runnable() {
             public void run() {
-                while ( true ) {
-                    if (!listMessageInfo.isEmpty()) {
-                        Display.getDefault().asyncExec(new Runnable() {
-                            public void run() {
-                                refreshInformation();
-                            }
-                        });
+                try {
+                    while (true) {
+                        if (!listMessageInfo.isEmpty()) {
+                            Display.getDefault().asyncExec(new Runnable() {
+                                public void run() {
+                                    refreshInformation();
+                                }
+                            });
+                        }
+                        try {
+                            Thread.sleep(500);
+                        } catch (Exception e) {
+                            //nothing to do
+                        }
                     }
-                    try {
-                        Thread.sleep(500);
-                    } catch (Exception e) {
-                    }
+                } catch (Exception e) {
+                    //What to do when the while send an error ?
                 }
                 }
         }).start();
