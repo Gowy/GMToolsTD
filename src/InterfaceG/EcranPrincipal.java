@@ -101,8 +101,8 @@ public class EcranPrincipal {
      */
     protected void createContents() {
         shell = new Shell();
-        shell.setSize(850, 650);
-        shell.setText("GM Tools");
+        shell.setSize(1024, 650);
+        shell.setText("ToolBox TD");
         shell.setLayout(new GridLayout());
 
 
@@ -319,28 +319,7 @@ public class EcranPrincipal {
         btnDisconnect.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-
-                new Thread(new Runnable() {
-                    public void run() {
-                        Date date = new Date();
-                        tdConnect.deconnexion();
-                        tdConnect = null;
-                        majInformation(MESSAGE_INFORMATION,nomModuleConnexion,"Deconnexion OK");
-
-                        Display.getDefault().asyncExec(new Runnable() {
-                            public void run() {
-
-                                activationOFF();
-                                textServer.setEnabled(true);
-                                textUsername.setEnabled(true);
-                                textPassword.setEnabled(true);
-
-                                btnConnect.setEnabled(true);
-                                btnDisconnect.setEnabled(false);
-                            }
-                        });
-                    }
-                }).start();
+                manageDisconnection();
             }
         });
 
@@ -514,6 +493,30 @@ public class EcranPrincipal {
                 textInformation.setText(messageInfo);
             }
         }
+    }
+
+
+    protected void manageDisconnection() {
+        new Thread(new Runnable() {
+            public void run() {
+                tdConnect.deconnexion();
+                tdConnect = null;
+                majInformation(MESSAGE_INFORMATION,nomModuleConnexion,"Deconnexion");
+
+                Display.getDefault().asyncExec(new Runnable() {
+                    public void run() {
+
+                        activationOFF();
+                        textServer.setEnabled(true);
+                        textUsername.setEnabled(true);
+                        textPassword.setEnabled(true);
+
+                        btnConnect.setEnabled(true);
+                        btnDisconnect.setEnabled(false);
+                    }
+                });
+            }
+        }).start();
     }
 
     /**

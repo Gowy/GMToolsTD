@@ -56,6 +56,10 @@ public class TDConnexion {
         }
     }
 
+    public boolean connexionValid() throws SQLException {
+        return teradata.isValid(10);
+    }
+
     /**
      * requestNumberAMP is used to get the number of AMP on the Teradata Server
      * @return number of AMP on the Teradata Server

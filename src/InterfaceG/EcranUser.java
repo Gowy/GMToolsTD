@@ -124,7 +124,7 @@ public class EcranUser extends ModelEcran implements InterfaceEcran {
 
         textUserInfoCommentString = new Text(groupUserInfo, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
         gridData = new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1);
-        gridData.widthHint = 150;
+        gridData.widthHint = 200;
         textUserInfoCommentString.setLayoutData(gridData);
 
 
@@ -188,7 +188,7 @@ public class EcranUser extends ModelEcran implements InterfaceEcran {
 
         textUserProfileName = new Text(groupUserProfile, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
         gridData = new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1);
-        gridData.widthHint = 150;
+        gridData.widthHint = 200;
         textUserProfileName.setLayoutData(gridData);
 
         Label lblUserProfileComment = new Label(groupUserProfile, SWT.NONE);
@@ -280,13 +280,13 @@ public class EcranUser extends ModelEcran implements InterfaceEcran {
         Text textUserLabsTitreLab = new Text(compUserLabs, SWT.CENTER | SWT.READ_ONLY);
         textUserLabsTitreLab.setText("Lab");
         gridData = new GridData(SWT.CENTER, SWT.TOP, true, false, 1, 1);
-        gridData.widthHint = 100;
+        gridData.widthHint = 150;
         textUserLabsTitreLab.setLayoutData(gridData);
 
         Text textUserLabsTitreDroit = new Text(compUserLabs, SWT.CENTER | SWT.READ_ONLY);
         textUserLabsTitreDroit.setText("Droit");
         gridData = new GridData(SWT.CENTER, SWT.TOP, true, false, 1, 1);
-        gridData.widthHint = 100;
+        gridData.widthHint = 150;
         textUserLabsTitreDroit.setLayoutData(gridData);
 
         btnValidUser.addSelectionListener(new SelectionAdapter() {
@@ -295,6 +295,15 @@ public class EcranUser extends ModelEcran implements InterfaceEcran {
                 final String username = textUserName.getText();
                 listRole = new ArrayList<>();
                 majInformation(ecranPrincipal.MESSAGE_INFORMATION,"Search information");
+
+                try {
+                    if (!(ecranPrincipal.getTdConnexion().connexionValid())) {
+                        ecranPrincipal.manageDisconnection();
+                    }
+                } catch (SQLException err) {
+                    ecranPrincipal.manageDisconnection();
+                    return;
+                }
 
                 new Thread(new Runnable() {
                     public void run() {
@@ -473,13 +482,13 @@ public class EcranUser extends ModelEcran implements InterfaceEcran {
                                             tabTextLabs[i][0].setText(listLabs.get(i).getGroup());
 
                                             gridData = new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1);
-                                            gridData.widthHint = 100;
+                                            gridData.widthHint = 150;
                                             tabTextLabs[i][1] = new Text(CompScLabs, SWT.CENTER | SWT.READ_ONLY | SWT.BORDER );
                                             tabTextLabs[i][1].setLayoutData(gridData);
                                             tabTextLabs[i][1].setText(listLabs.get(i).getLab());
 
                                             gridData = new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1);
-                                            gridData.widthHint = 100;
+                                            gridData.widthHint = 150;
                                             tabTextLabs[i][2] = new Text(CompScLabs, SWT.CENTER | SWT.READ_ONLY | SWT.BORDER );
                                             tabTextLabs[i][2].setLayoutData(gridData);
                                             tabTextLabs[i][2].setText(listLabs.get(i).getDroit());

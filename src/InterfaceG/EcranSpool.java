@@ -127,7 +127,7 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
 
         textSpoolInfoStart = new Text(groupSpoolInfo, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
         gridData = new GridData(SWT.LEFT, SWT.CENTER, true, true, 1, 1);
-        gridData.widthHint = 60;
+        gridData.widthHint = 100;
         textSpoolInfoStart.setLayoutData(gridData);
 
         Label lblSpoolInfoCurrent = new Label(groupSpoolInfo, SWT.NONE);
@@ -137,7 +137,7 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
 
         textSpoolInfoCurrent = new Text(groupSpoolInfo, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
         gridData = new GridData(SWT.LEFT, SWT.CENTER, true, true, 1, 1);
-        gridData.widthHint = 60;
+        gridData.widthHint = 100;
         textSpoolInfoCurrent.setLayoutData(gridData);
 
         Label lblSpoolInfoIter = new Label(groupSpoolInfo, SWT.NONE);
@@ -147,7 +147,7 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
 
         textSpoolInfoIter = new Text(groupSpoolInfo, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
         gridData = new GridData(SWT.LEFT, SWT.CENTER, true, true, 1, 1);
-        gridData.widthHint = 50;
+        gridData.widthHint = 100;
         textSpoolInfoIter.setLayoutData(gridData);
 
 
@@ -174,12 +174,12 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
 
         textCurrentSum = new Text(groupSpoolSum, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
         gridData = new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1);
-        gridData.widthHint = 100;
+        gridData.widthHint = 150;
         textCurrentSum.setLayoutData(gridData);
 
         textRealSum = new Text(groupSpoolSum, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
         gridData = new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1);
-        gridData.widthHint = 100;
+        gridData.widthHint = 150;
         textRealSum.setLayoutData(gridData);
 
         textSkewFactor = new Text(groupSpoolSum, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
@@ -205,12 +205,12 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
 
         textMaxCurrentSum = new Text(groupSpoolSum, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
         gridData = new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1);
-        gridData.widthHint = 100;
+        gridData.widthHint = 150;
         textMaxCurrentSum.setLayoutData(gridData);
 
         textMaxRealSum = new Text(groupSpoolSum, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
         gridData = new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1);
-        gridData.widthHint = 100;
+        gridData.widthHint = 150;
         textMaxRealSum.setLayoutData(gridData);
 
         textMaxSkewFactor = new Text(groupSpoolSum, SWT.CENTER | SWT.BORDER | SWT.READ_ONLY);
@@ -296,13 +296,13 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
         Text lblDetCurrent = new Text(ctmp, SWT.CENTER | SWT.READ_ONLY);
         lblDetCurrent.setText("CurrentSpool");
         gridData = new GridData(SWT.CENTER, SWT.TOP, false, false, 1, 1);
-        gridData.widthHint = 110;
+        gridData.widthHint = 160;
         lblDetCurrent.setLayoutData(gridData);
 
         Text lblDetMax = new Text(ctmp, SWT.CENTER | SWT.READ_ONLY);
         lblDetMax.setText("MaxSpool");
         gridData = new GridData(SWT.CENTER, SWT.TOP, false, false, 1, 1);
-        gridData.widthHint = 110;
+        gridData.widthHint = 160;
         lblDetMax.setLayoutData(gridData);
 
 
@@ -329,13 +329,13 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
         Text lblDetAggCurrent = new Text(ctmpAgg, SWT.CENTER | SWT.READ_ONLY);
         lblDetAggCurrent.setText("CurrentSpool");
         gridData = new GridData(SWT.CENTER, SWT.TOP, false, false, 1, 1);
-        gridData.widthHint = 110;
+        gridData.widthHint = 160;
         lblDetAggCurrent.setLayoutData(gridData);
 
         Text lblDetAggMax = new Text(ctmpAgg, SWT.CENTER | SWT.READ_ONLY);
         lblDetAggMax.setText("MaxSpool");
         gridData = new GridData(SWT.CENTER, SWT.TOP, false, false, 1, 1);
-        gridData.widthHint = 110;
+        gridData.widthHint = 160;
         lblDetAggMax.setLayoutData(gridData);
 
 
@@ -364,6 +364,8 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
                 textSpoolInfoIter.setText(compteurIter+"");
                 majInformation(ecranPrincipal.MESSAGE_INFORMATION,"Start");
                 maxSpoolUsageSum = new SpoolUsage(0.0,0.0,0.0);
+
+
                 new Thread(new Runnable() {
                     public void run() {
                         while (thSpoolActive) {
@@ -415,6 +417,18 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
                                 majInformation(ecranPrincipal.MESSAGE_ERROR,err.getMessage());
                                 thSpoolActive = false;
                             } catch (NullPointerException err) {
+                                majInformation(ecranPrincipal.MESSAGE_ERROR,err.getMessage());
+                                thSpoolActive = false;
+                            }
+
+                            // gestion de la deconnexion
+                            try {
+                                if (!(ecranPrincipal.getTdConnexion().connexionValid())) {
+                                    ecranPrincipal.manageDisconnection();
+                                    thSpoolActive = false;
+                                }
+                            } catch (SQLException err) {
+                                ecranPrincipal.manageDisconnection();
                                 thSpoolActive = false;
                             }
 
@@ -449,6 +463,8 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
                                 }
                             });
 
+
+
                             if (thSpoolActive) {
                                 try {
                                     Thread.sleep(freqCalcSpool * 1000);
@@ -456,6 +472,7 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
                                     //nothing to do here
                                 }
                             }
+
                         }
                     }
                 }).start();
@@ -625,14 +642,14 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
                 tabTextSpoolDetAgg[0][i].setText(i+"");
 
                 gridData = new GridData(SWT.CENTER, SWT.CENTER, false, true, 1, 1);
-                gridData.widthHint = 100;
+                gridData.widthHint = 150;
                 tabTextSpoolDet[1][i] = new Text(CompScSpoolDetail, SWT.CENTER | SWT.READ_ONLY | SWT.BORDER );
                 tabTextSpoolDet[1][i].setLayoutData(gridData);
                 tabTextSpoolDetAgg[1][i] = new Text(CompScSpoolDetailAgg, SWT.CENTER | SWT.READ_ONLY | SWT.BORDER );
                 tabTextSpoolDetAgg[1][i].setLayoutData(gridData);
 
                 gridData = new GridData(SWT.CENTER, SWT.CENTER, false, true, 1, 1);
-                gridData.widthHint = 100;
+                gridData.widthHint = 150;
                 tabTextSpoolDet[2][i] = new Text(CompScSpoolDetail, SWT.CENTER | SWT.READ_ONLY | SWT.BORDER );
                 tabTextSpoolDet[2][i].setLayoutData(gridData);
                 tabTextSpoolDetAgg[2][i] = new Text(CompScSpoolDetailAgg, SWT.CENTER | SWT.READ_ONLY | SWT.BORDER );
