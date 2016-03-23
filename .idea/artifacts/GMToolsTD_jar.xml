@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="GMToolsTD:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/GMToolsTD_jar</output-path>
+    <root id="archive" name="GMToolsTD.jar">
+      <element id="module-output" name="GMToolsTD" />
+      <element id="extracted-dir" path="G:/JDBC_Teradata/swt.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="G:/JDBC_Teradata/terajdbc4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="G:/JDBC_Teradata/tdgssconfig.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

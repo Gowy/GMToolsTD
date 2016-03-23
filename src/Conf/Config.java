@@ -78,8 +78,8 @@ public class Config {
         defaultConf[7][0] = V_DATABASES;
 
         //values
-        defaultConf[0][1] = "192.168.0.15";
-        defaultConf[1][1] = "gowy";
+        defaultConf[0][1] = "";
+        defaultConf[1][1] = "";
         defaultConf[2][1] = "dbc.usersV_all";
         defaultConf[3][1] = "dbc.AllRightsV";
         defaultConf[4][1] = "dbc.RoleMembersV";
