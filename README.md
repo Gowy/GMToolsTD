@@ -1,7 +1,23 @@
 # GMToolsTD
-Teradata Tools Made by GMA
 
-Configuration to create a test environnement with a Teradata VM :
+This ToolBox is used to have more information about Spool usage and user status.
+
+## Execution
+
+JDK Used : `jdk1.7.0_79`
+
+## Usage
+
+![spoolusage](media/GMToolsTD_SpoolUsage.png)
+
+![user](media/GMToolsTD_User.png)
+
+![config](media/GMToolsTD_Config.png)
+
+## Test Environment
+
+Configuration to create a test environment with a Teradata VM :
+```SQL
 -- Creation d'un environnement de test :
 
 CREATE PROFILE PROFILE_TEST as 
@@ -213,6 +229,11 @@ FROM	DBC.dbase
                      AND OU.ObjectId IS NULL
                      AND OU.FieldId IS NULL
                      AND OU.IndexNumber IS NULL
-
-
 WITH	CHECK OPTION;
+```
+
+
+## Changelog
+
+v1.0 : ...
+
