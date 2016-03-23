@@ -1,17 +1,20 @@
 # GMToolsTD
 
-This ToolBox is used to have more information about Spool usage and user status.
+This ToolBox could be used to have more information about spool usage and user on Teradata v14.10.
 
-## Execution
+## Java version
 
-JDK Used : `jdk1.7.0_79`
+JDK used : `jdk1.7.0_79`
 
 ## Usage
 
+#### Spool Module
 ![spoolusage](media/GMToolsTD_SpoolUsage.png)
 
+#### User Module
 ![user](media/GMToolsTD_User.png)
 
+#### Config Module
 ![config](media/GMToolsTD_Config.png)
 
 ## Test Environment
