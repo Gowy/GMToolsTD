@@ -50,15 +50,21 @@ public class TDConnexion {
         if (teradata != null) {
             try {
                 teradata.close();
+                teradata = null;
             } catch (SQLException e) {
                 //nothing to do here
             }
         }
     }
 
-    public boolean connexionValid() throws SQLException {
-        return teradata.isValid(10);
+    /**
+     * isConnected is used to know if the connection is active (without executing SQL)
+     * @return true if the connection is active
+     */
+    public boolean isConnected() {
+        return (teradata != null);
     }
+
 
     /**
      * requestNumberAMP is used to get the number of AMP on the Teradata Server
@@ -80,6 +86,7 @@ public class TDConnexion {
             }
             rs.close();
         } catch (SQLException e) {
+            deconnexion();
             throw e;
         } finally {
             if (rs != null) {
@@ -114,15 +121,18 @@ public class TDConnexion {
                 result = new SpoolUsage(rs.getDouble(1),rs.getDouble(2),rs.getDouble(3));
             }
 
-            if (result == null) { throw new SQLException("User ["+user+"] doesn't exist"); }
 
         } catch (SQLException e) {
+            deconnexion();
             throw e;
         } finally {
             if (rs != null) {
                 rs.close();
             }
         }
+
+        if (result == null) { throw new SQLException("User ["+user+"] doesn't exist"); }
+
         return result;
     }
 
@@ -135,7 +145,7 @@ public class TDConnexion {
      * @throws SQLException if error while executing of SQL query
      */
     public List<SpoolUsage> requestSpoolDet(String user) throws SQLException {
-        List<SpoolUsage> result = new ArrayList<>();
+        List<SpoolUsage> result = new ArrayList<SpoolUsage>();
         ResultSet rs = null;
         String base = config.getValueConf(config.V_DISKSPACE);
         try {
@@ -149,14 +159,16 @@ public class TDConnexion {
                 result.add(new SpoolUsage(rs.getInt(1),rs.getDouble(2),rs.getDouble(3)));
             }
 
-            if (result.isEmpty()) { throw new SQLException("User ["+user+"] doesn't exist"); }
         } catch (SQLException e) {
+            deconnexion();
             throw e;
         } finally {
             if (rs != null) {
                 rs.close();
             }
         }
+
+        if (result.isEmpty()) { throw new SQLException("User ["+user+"] doesn't exist"); }
 
         return result;
     }
@@ -172,6 +184,7 @@ public class TDConnexion {
         UserTDInfo result = null;
         ResultSet rs = null;
         String base = config.getValueConf(config.V_USERS);
+        String message = "";
         try {
             String query="select \n" +
                     "username as CompteTD\n" +
@@ -186,7 +199,7 @@ public class TDConnexion {
                     "\tend,'') as LockedDateTime\n" +
                     ",lockedcount\n" +
                     "from "+base+"\n" +
-                    "where username = '"+user+"'\n" +
+                    "where upper(username) = upper('"+user+"')\n" +
                     ";";
 
             PreparedStatement stmt=teradata.prepareStatement(query);
@@ -195,15 +208,17 @@ public class TDConnexion {
                 result = new UserTDInfo(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7));
             }
 
-            if (result == null) { throw new SQLException("User ["+user+"] doesn't exist"); }
-
         } catch (SQLException e) {
+            deconnexion();
             throw e;
         } finally {
             if (rs != null) {
                 rs.close();
             }
         }
+
+        if (result == null) { throw new SQLException("User ["+user+"] doesn't exist"); }
+
         return result;
     }
 
@@ -235,15 +250,18 @@ public class TDConnexion {
                 result = new ProfileInfo(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getDouble(5),rs.getDouble(6));
             }
 
-            if (result == null) { throw new SQLException("Profile ["+profileName+"] doesn't exist"); }
 
         } catch (SQLException e) {
+            deconnexion();
             throw e;
         } finally {
             if (rs != null) {
                 rs.close();
             }
         }
+
+        if (result == null) { throw new SQLException("Profile ["+profileName+"] doesn't exist"); }
+
         return result;
     }
 
@@ -255,11 +273,11 @@ public class TDConnexion {
      * @throws SQLException if error while executing of SQL query
      */
     public List<String> requestListRole(String user) throws SQLException {
-        List<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<String>();
         ResultSet rs = null;
         String base = config.getValueConf(config.V_ROLEMEMBERS);
         try {
-            String query="select RoleName from "+base+" where Grantee = '"+user+"' order by RoleName;";
+            String query="select RoleName from "+base+" where upper(Grantee) = upper('"+user+"') order by RoleName;";
 
             PreparedStatement stmt=teradata.prepareStatement(query);
             rs=stmt.executeQuery();
@@ -267,15 +285,18 @@ public class TDConnexion {
                 result.add(rs.getString(1));
             }
 
-            if (result.size() < 1) { throw new SQLException("User ["+user+"] doesn't have 'Role Fonctionnel'"); }
 
         } catch (SQLException e) {
+            deconnexion();
             throw e;
         } finally {
             if (rs != null) {
                 rs.close();
             }
         }
+
+        if (result.size() < 1) { throw new SQLException("User ["+user+"] doesn't have 'Role Fonctionnel'"); }
+
         return result;
     }
 
@@ -286,7 +307,7 @@ public class TDConnexion {
      * @throws SQLException if error while executing of SQL query
      */
     public List<LabInfo> requestListLabs(String user) throws SQLException {
-        List<LabInfo> result = new ArrayList<>();
+        List<LabInfo> result = new ArrayList<LabInfo>();
         ResultSet rs = null;
         String baseAR = config.getValueConf(config.V_ALLRIGHTS);
         String baseDB = config.getValueConf(config.V_DATABASES);
@@ -302,7 +323,7 @@ public class TDConnexion {
                     "select OwnerName as LabGroup, Databasename as Lab from "+baseDB+" where ownername like 'labs!_%' escape '!' \n"+
                     ") listlab \n"+
                     "on (src.databasename = listlab.Lab) \n"+
-                    "where username = '"+user+"' and accessright = 'R ' \n"+
+                    "where upper(username) = upper('"+user+"') and accessright = 'R ' \n"+
                     "group by listlab.LabGroup, listlab.Lab, src.accessright \n"+
                     ") LEC\n" +
                     "left outer join (\n" +
@@ -312,7 +333,7 @@ public class TDConnexion {
                     "select OwnerName as LabGroup, Databasename as Lab from "+baseDB+" where ownername like 'labs!_%' escape '!' \n"+
                     ") listlab \n"+
                     "on (src.databasename = listlab.Lab) \n"+
-                    "where username = '"+user+"' and accessright = 'U ' \n"+
+                    "where upper(username) = upper('"+user+"') and accessright = 'U ' \n"+
                     "group by listlab.LabGroup, listlab.Lab, src.accessright \n"+
                     ") ECR\n" +
                     "on ( LEC.LabGroup = ECR.LabGroup \n" +
@@ -327,15 +348,17 @@ public class TDConnexion {
                 result.add(new LabInfo(rs.getString(1),rs.getString(2),rs.getString(3)));
             }
 
-            if (result.size() < 1) { throw new SQLException("User ["+user+"] doesn't have right on 'Labs'"); }
-
         } catch (SQLException e) {
+            deconnexion();
             throw e;
         } finally {
             if (rs != null) {
                 rs.close();
             }
         }
+
+        if (result.size() < 1) { throw new SQLException("User ["+user+"] doesn't have right on 'Labs'"); }
+
         return result;
     }
 

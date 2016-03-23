@@ -70,6 +70,7 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
     private String[][] tabTextSpoolDetValue;
     private String[][] tabTextSpoolDetAggValue;
     private int compteurIter = 0;
+    private boolean hasToStop = false;
     SpoolUsage maxSpoolUsageSum;
 
     private GridData gridData;
@@ -346,6 +347,7 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
             public void widgetSelected(SelectionEvent e) {
                 thSpoolActive = true;
                 AggTextSpoolDet = null;
+                hasToStop = false;
                 textSpoolUserValue = textSpoolUser.getText();
                 compteurIter = 0;
 
@@ -368,102 +370,104 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
 
                 new Thread(new Runnable() {
                     public void run() {
+
                         while (thSpoolActive) {
                             final int nbrAMP = ecranPrincipal.getNumberAmps();
 
-                            if (!thSpoolActive) { return ;}
-                            SpoolUsage spoolUsageSum;
+                            if (thSpoolActive) {
+                                SpoolUsage spoolUsageSum;
 
-                            try {
-                                spoolUsageSum = ecranPrincipal.getTdConnexion().requestSpoolSum(textSpoolUserValue);
-                                textCurrentSumValue = spoolUsageSum.formatSpoolWithSize(spoolUsageSum.getCurrentSpoolSum(),sizeValueSumSpool);
-                                textRealSumValue = spoolUsageSum.formatSpoolWithSize(spoolUsageSum.getRealSpoolSum(),sizeValueSumSpool);
-                                textSkewFactorValue = spoolUsageSum.getSkewFactor()+"";
+                                try {
+                                    spoolUsageSum = ecranPrincipal.getTdConnexion().requestSpoolSum(textSpoolUserValue);
+                                    textCurrentSumValue = spoolUsageSum.formatSpoolWithSize(spoolUsageSum.getCurrentSpoolSum(), sizeValueSumSpool);
+                                    textRealSumValue = spoolUsageSum.formatSpoolWithSize(spoolUsageSum.getRealSpoolSum(), sizeValueSumSpool);
+                                    textSkewFactorValue = spoolUsageSum.getSkewFactor() + "";
 
-                                maxSpoolUsageSum = maxSpoolUsageSum.returnMaxSpoolSum(spoolUsageSum);
+                                    maxSpoolUsageSum = maxSpoolUsageSum.returnMaxSpoolSum(spoolUsageSum);
 
-                                textMaxCurrentSumValue = maxSpoolUsageSum.formatSpoolWithSize(maxSpoolUsageSum.getCurrentSpoolSum(),sizeValueSumSpool);
-                                textMaxRealSumValue = maxSpoolUsageSum.formatSpoolWithSize(maxSpoolUsageSum.getRealSpoolSum(),sizeValueSumSpool);
-                                textMaxSkewFactorValue = maxSpoolUsageSum.getSkewFactor()+"";
+                                    textMaxCurrentSumValue = maxSpoolUsageSum.formatSpoolWithSize(maxSpoolUsageSum.getCurrentSpoolSum(), sizeValueSumSpool);
+                                    textMaxRealSumValue = maxSpoolUsageSum.formatSpoolWithSize(maxSpoolUsageSum.getRealSpoolSum(), sizeValueSumSpool);
+                                    textMaxSkewFactorValue = maxSpoolUsageSum.getSkewFactor() + "";
 
-                                List<SpoolUsage> listSU;
-                                listSU = ecranPrincipal.getTdConnexion().requestSpoolDet(textSpoolUserValue);
+                                    List<SpoolUsage> listSU;
+                                    listSU = ecranPrincipal.getTdConnexion().requestSpoolDet(textSpoolUserValue);
 
-                                if ( AggTextSpoolDet == null || AggTextSpoolDet.isEmpty() ) {
-                                    AggTextSpoolDet = new HashMap<>();
+                                    if (AggTextSpoolDet == null || AggTextSpoolDet.isEmpty()) {
+                                        AggTextSpoolDet = new HashMap<Integer, SpoolUsage>();
+                                        for (int i = 0; i < nbrAMP; i++) {
+                                            AggTextSpoolDet.put(i, new SpoolUsage(i, 0.0, 0.0));
+                                        }
+                                    } else {
+                                        for (int i = 0; i < ecranPrincipal.getNumberAmps(); i++) {
+                                            SpoolUsage suTmp = listSU.get(i);
+                                            AggTextSpoolDet.put(suTmp.getVproc(), suTmp.returnMaxSpoolUsage(AggTextSpoolDet.get(suTmp.getVproc())));
+                                        }
+                                    }
+
+                                    tabTextSpoolDetValue = new String[3][nbrAMP];
+                                    tabTextSpoolDetAggValue = new String[3][nbrAMP];
+
                                     for (int i = 0; i < nbrAMP; i++) {
-                                        AggTextSpoolDet.put(i,new SpoolUsage(i,0.0,0.0));
+                                        tabTextSpoolDetValue[0][i] = listSU.get(i).getVproc().toString();
+                                        tabTextSpoolDetValue[1][i] = listSU.get(i).formatSpoolWithSize(listSU.get(i).getCurrentSpool(), sizeValueSpool);
+                                        tabTextSpoolDetValue[2][i] = listSU.get(i).formatSpoolWithSize(listSU.get(i).getMaxProfileSpool(), sizeValueSpool);
+                                        tabTextSpoolDetAggValue[0][i] = AggTextSpoolDet.get(i).getVproc().toString();
+                                        tabTextSpoolDetAggValue[1][i] = AggTextSpoolDet.get(i).formatSpoolWithSize(AggTextSpoolDet.get(i).getCurrentSpool(), sizeValueSpool);
+                                        tabTextSpoolDetAggValue[2][i] = AggTextSpoolDet.get(i).formatSpoolWithSize(AggTextSpoolDet.get(i).getMaxProfileSpool(), sizeValueSpool);
                                     }
-                                } else {
-                                    for (int i = 0; i < ecranPrincipal.getNumberAmps(); i++) {
-                                        SpoolUsage suTmp = listSU.get(i);
-                                        AggTextSpoolDet.put(suTmp.getVproc(),suTmp.returnMaxSpoolUsage(AggTextSpoolDet.get(suTmp.getVproc())));
-                                    }
-                                }
 
-                                tabTextSpoolDetValue = new String[3][nbrAMP];
-                                tabTextSpoolDetAggValue = new String[3][nbrAMP];
-
-                                for (int i = 0; i < nbrAMP; i++) {
-                                    tabTextSpoolDetValue[0][i] = listSU.get(i).getVproc().toString();
-                                    tabTextSpoolDetValue[1][i] = listSU.get(i).formatSpoolWithSize(listSU.get(i).getCurrentSpool(), sizeValueSpool);
-                                    tabTextSpoolDetValue[2][i] = listSU.get(i).formatSpoolWithSize(listSU.get(i).getMaxProfileSpool(), sizeValueSpool) ;
-                                    tabTextSpoolDetAggValue[0][i] = AggTextSpoolDet.get(i).getVproc().toString();
-                                    tabTextSpoolDetAggValue[1][i] = AggTextSpoolDet.get(i).formatSpoolWithSize(AggTextSpoolDet.get(i).getCurrentSpool(), sizeValueSpool);
-                                    tabTextSpoolDetAggValue[2][i] = AggTextSpoolDet.get(i).formatSpoolWithSize(AggTextSpoolDet.get(i).getMaxProfileSpool(), sizeValueSpool);
-                                }
-
-                            } catch (SQLException err) {
-                                majInformation(ecranPrincipal.MESSAGE_ERROR,err.getMessage());
-                                thSpoolActive = false;
-                            } catch (NullPointerException err) {
-                                majInformation(ecranPrincipal.MESSAGE_ERROR,err.getMessage());
-                                thSpoolActive = false;
-                            }
-
-                            // gestion de la deconnexion
-                            try {
-                                if (!(ecranPrincipal.getTdConnexion().connexionValid())) {
-                                    ecranPrincipal.manageDisconnection();
+                                } catch (SQLException err) {
+                                    majInformation(ecranPrincipal.MESSAGE_ERROR, err.getMessage());
+                                    thSpoolActive = false;
+                                } catch (NullPointerException err) {
+                                    majInformation(ecranPrincipal.MESSAGE_ERROR, err.getMessage());
                                     thSpoolActive = false;
                                 }
-                            } catch (SQLException err) {
-                                ecranPrincipal.manageDisconnection();
+
+
+                            }
+
+                            //Manage connection problem
+                            if ((ecranPrincipal.getTdConnexion() == null) || (!(ecranPrincipal.getTdConnexion().isConnected()))) {
                                 thSpoolActive = false;
                             }
 
                             ecranPrincipal.getDisplay().asyncExec(new Runnable() {
                                 public void run() {
 
-                                 //   refreshInformation();
+                                    if (!thSpoolActive || textCurrentSum.isDisposed()) {
+                                        thSpoolActive = false;
+                                    } else {
+                                        textCurrentSum.setText(textCurrentSumValue + " " + sizeValueSumSpool);
+                                        textRealSum.setText(textRealSumValue + " " + sizeValueSumSpool);
+                                        textSkewFactor.setText(textSkewFactorValue + " %");
 
-                                    if (!thSpoolActive || textCurrentSum.isDisposed()) { thSpoolActive = false; return ; }
+                                        textMaxCurrentSum.setText(textMaxCurrentSumValue + " " + sizeValueSumSpool);
+                                        textMaxRealSum.setText(textMaxRealSumValue + " " + sizeValueSumSpool);
+                                        textMaxSkewFactor.setText(textMaxSkewFactorValue + " %");
 
-                                    textCurrentSum.setText(textCurrentSumValue + " " + sizeValueSumSpool);
-                                    textRealSum.setText(textRealSumValue + " " + sizeValueSumSpool);
-                                    textSkewFactor.setText(textSkewFactorValue + " %");
+                                        for (int i = 0; i < nbrAMP; i++) {
+                                            tabTextSpoolDet[0][i].setText(tabTextSpoolDetValue[0][i]);
+                                            tabTextSpoolDet[1][i].setText(tabTextSpoolDetValue[1][i] + " " + sizeValueSpool);
+                                            tabTextSpoolDet[2][i].setText(tabTextSpoolDetValue[2][i] + " " + sizeValueSpool);
+                                            tabTextSpoolDetAgg[0][i].setText(tabTextSpoolDetAggValue[0][i]);
+                                            tabTextSpoolDetAgg[1][i].setText(tabTextSpoolDetAggValue[1][i] + " " + sizeValueSpool);
+                                            tabTextSpoolDetAgg[2][i].setText(tabTextSpoolDetAggValue[2][i] + " " + sizeValueSpool);
+                                        }
 
-                                    textMaxCurrentSum.setText(textMaxCurrentSumValue + " " + sizeValueSumSpool);
-                                    textMaxRealSum.setText(textMaxRealSumValue + " " + sizeValueSumSpool);
-                                    textMaxSkewFactor.setText(textMaxSkewFactorValue + " %");
-
-                                    for (int i = 0; i < nbrAMP; i++) {
-                                        tabTextSpoolDet[0][i].setText(tabTextSpoolDetValue[0][i]);
-                                        tabTextSpoolDet[1][i].setText(tabTextSpoolDetValue[1][i] + " " + sizeValueSpool);
-                                        tabTextSpoolDet[2][i].setText(tabTextSpoolDetValue[2][i] + " " + sizeValueSpool);
-                                        tabTextSpoolDetAgg[0][i].setText(tabTextSpoolDetAggValue[0][i]);
-                                        tabTextSpoolDetAgg[1][i].setText(tabTextSpoolDetAggValue[1][i] + " " + sizeValueSpool);
-                                        tabTextSpoolDetAgg[2][i].setText(tabTextSpoolDetAggValue[2][i] + " " + sizeValueSpool);
+                                        majDateText(textSpoolInfoCurrent);
+                                        compteurIter++;
+                                        textSpoolInfoIter.setText(compteurIter + "");
                                     }
-
-                                    majDateText(textSpoolInfoCurrent);
-                                    compteurIter++;
-                                    textSpoolInfoIter.setText(compteurIter+"");
 
                                 }
                             });
 
 
+                            if (hasToStop) {
+                                thSpoolActive = false;
+                                hasToStop = false;
+                            }
 
                             if (thSpoolActive) {
                                 try {
@@ -471,6 +475,20 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
                                 } catch (Exception e) {
                                     //nothing to do here
                                 }
+                            } else {
+                                ecranPrincipal.getDisplay().asyncExec(new Runnable() {
+                                    public void run() {
+                                        // error + activation
+                                        activatedContents();
+                                        majInformation(ecranPrincipal.MESSAGE_INFORMATION, "Stop");
+                                    }
+                                });
+
+                                //Manage connection problem
+                                if ((ecranPrincipal.getTdConnexion() == null) || (!(ecranPrincipal.getTdConnexion().isConnected()))) {
+                                    ecranPrincipal.manageDisconnection();
+                                }
+                                return;
                             }
 
                         }
@@ -493,10 +511,7 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
         btnStopSpool.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                activatedContents();
-                thSpoolActive = false;
-                majInformation(ecranPrincipal.MESSAGE_INFORMATION,"Stop");
-
+                hasToStop = true;
             }
         });
 

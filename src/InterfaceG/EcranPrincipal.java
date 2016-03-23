@@ -88,8 +88,8 @@ public class EcranPrincipal {
     private String entryUsername = "";
     private String entryPassword = "";
     private boolean connexionStatut = false;
-    private Integer nbrAMP;
-    private LinkedList<String> listMessageInfo = new LinkedList<>();
+    private Integer nbrAMP = 0;
+    private LinkedList<String> listMessageInfo = new LinkedList<String>();
 
 
     private TDConnexion tdConnect;
@@ -499,20 +499,25 @@ public class EcranPrincipal {
     protected void manageDisconnection() {
         new Thread(new Runnable() {
             public void run() {
+
+                Display.getDefault().asyncExec(new Runnable() {
+                    public void run() {
+                        activationOFF();
+                        btnDisconnect.setEnabled(false);
+                    }
+                });
+
                 tdConnect.deconnexion();
                 tdConnect = null;
                 majInformation(MESSAGE_INFORMATION,nomModuleConnexion,"Deconnexion");
 
                 Display.getDefault().asyncExec(new Runnable() {
                     public void run() {
-
-                        activationOFF();
                         textServer.setEnabled(true);
                         textUsername.setEnabled(true);
                         textPassword.setEnabled(true);
 
                         btnConnect.setEnabled(true);
-                        btnDisconnect.setEnabled(false);
                     }
                 });
             }

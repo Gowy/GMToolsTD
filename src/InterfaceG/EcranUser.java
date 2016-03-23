@@ -293,20 +293,19 @@ public class EcranUser extends ModelEcran implements InterfaceEcran {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 final String username = textUserName.getText();
-                listRole = new ArrayList<>();
+                listRole = new ArrayList<String>();
                 majInformation(ecranPrincipal.MESSAGE_INFORMATION,"Search information");
 
-                try {
-                    if (!(ecranPrincipal.getTdConnexion().connexionValid())) {
-                        ecranPrincipal.manageDisconnection();
-                    }
-                } catch (SQLException err) {
-                    ecranPrincipal.manageDisconnection();
-                    return;
-                }
 
                 new Thread(new Runnable() {
                     public void run() {
+
+                        //desactive button
+                        ecranPrincipal.getDisplay().asyncExec(new Runnable() {
+                            public void run() {
+                                desactivatedContents();
+                            }
+                        });
 
                         try {
                             userTDInfo = ecranPrincipal.getTdConnexion().requestUserTDInfo(username);
@@ -315,6 +314,12 @@ public class EcranUser extends ModelEcran implements InterfaceEcran {
                             majInformation(ecranPrincipal.MESSAGE_ERROR,err.getMessage());
                             afficheInfo = false;
                             userTDInfo = null;
+                        }
+
+                        //Manage connection problem
+                        if ((ecranPrincipal.getTdConnexion() == null) || (!(ecranPrincipal.getTdConnexion().isConnected()))) {
+                            ecranPrincipal.manageDisconnection();
+                            return;
                         }
 
                         if (userTDInfo != null) {
@@ -347,6 +352,13 @@ public class EcranUser extends ModelEcran implements InterfaceEcran {
                             majInformation(ecranPrincipal.MESSAGE_ERROR,err.getMessage());
                             afficheLabs = false;
                         }
+
+                        //Manage connection problem
+                        if ((ecranPrincipal.getTdConnexion() == null) || (!(ecranPrincipal.getTdConnexion().isConnected()))) {
+                            ecranPrincipal.manageDisconnection();
+                            return;
+                        }
+
 
 
                         ecranPrincipal.getDisplay().asyncExec(new Runnable() {
@@ -387,6 +399,7 @@ public class EcranUser extends ModelEcran implements InterfaceEcran {
 
                                 if (ScrollCompRole!= null) {
                                     ScrollCompRole.dispose();
+                                    compositePrincipal.pack(true);
                                 }
 
                                 if (afficheRoles) {
@@ -435,18 +448,20 @@ public class EcranUser extends ModelEcran implements InterfaceEcran {
 
                                 }
 
-                                if (ScrollCompLabs!= null) {
+                                if (ScrollCompLabs != null) {
                                     ScrollCompLabs.dispose();
+                                    compositePrincipal.pack(true);
                                 }
+
 
                                 if (afficheLabs) {
                                     // group labs (groupUserLabs)
                                     int tmp = listLabs.size();
 
-                                    if (tmp < 1) {
-                                        // on gère une liste vide ?
-                                        System.out.println("La liste des labs est vide !");
-                                    } else {
+                                    if (tmp >= 1) {
+                                        // on gère une liste vide ? (tmp < 1)
+                                        //System.out.println("La liste des labs est vide !");
+                                 //   } else {
 
                                         if (ScrollCompLabs == null || ScrollCompLabs.isDisposed()) {
 
@@ -503,12 +518,20 @@ public class EcranUser extends ModelEcran implements InterfaceEcran {
                                 if (afficheRoles || afficheLabs ) {
                                     compositePrincipal.pack(true);
                                     ecranPrincipal.refreshShell();
-                                }
+                               }
 
                             }
                         });
 
+                        ecranPrincipal.getDisplay().syncExec(new Runnable() {
+                            public void run() {
+                                activatedContents();
+                            }
+                        });
+
                     }}).start();
+
+
             }
         });
 

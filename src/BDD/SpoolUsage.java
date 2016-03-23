@@ -104,22 +104,16 @@ public class SpoolUsage {
      */
     public String formatSpoolWithSize (Double spoolValue, String sizeValue) {
         String result;
-        switch (sizeValue) {
-            case "To" :
-                result = decimalFormat.format(spoolValue / divTo);
-                break;
-            case "Go" :
-                result = decimalFormat.format(spoolValue / divGo);
-                break;
-            case "Mo" :
-                result = decimalFormat.format(spoolValue / divMo);
-                break;
-            case "Ko" :
-                result = decimalFormat.format(spoolValue / divKo);
-                break;
-            default :
-                result = decimalFormat.format(spoolValue);
-                break;
+        if (sizeValue.equals("To")) {
+            result = decimalFormat.format(spoolValue / divTo);
+        } else if (sizeValue.equals("Go")) {
+            result = decimalFormat.format(spoolValue / divGo);
+        } else if (sizeValue.equals("Mo")) {
+            result = decimalFormat.format(spoolValue / divMo);
+        } else if (sizeValue.equals("Ko")) {
+            result = decimalFormat.format(spoolValue / divKo);
+        } else {
+            result = decimalFormat.format(spoolValue);
         }
         return result;
     }
