@@ -17,8 +17,8 @@ import java.util.List;
 
 /**
  * This Class is used to create the Spool screen
- * @author GMA
- * @version 0.1
+ * @author Gowy
+ * @version 1.0
  */
 public class EcranSpool extends ModelEcran implements InterfaceEcran{
 
@@ -484,14 +484,16 @@ public class EcranSpool extends ModelEcran implements InterfaceEcran{
                                     }
                                 });
 
-                                //Manage connection problem
-                                if ((ecranPrincipal.getTdConnexion() == null) || (!(ecranPrincipal.getTdConnexion().isConnected()))) {
-                                    ecranPrincipal.manageDisconnection();
-                                }
-                                return;
                             }
 
                         }
+
+
+                        //Manage connection problem
+                        if ((ecranPrincipal.getTdConnexion() == null) || (!(ecranPrincipal.getTdConnexion().isConnected()))) {
+                            ecranPrincipal.manageDisconnection();
+                        }
+
                     }
                 }).start();
 

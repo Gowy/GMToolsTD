@@ -4,8 +4,8 @@ import java.text.DecimalFormat;
 
 /**
  * This Class is used to manage Spool Usage information
- * @author GMA
- * @version 0.1
+ * @author Gowy
+ * @version 1.0
  */
 public class SpoolUsage {
 

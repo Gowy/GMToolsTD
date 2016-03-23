@@ -5,8 +5,8 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * This Class is used to create a Screen Model for the Interface
- * @author GMA
- * @version 0.1
+ * @author Gowy
+ * @version 1.0
  */
 abstract class ModelEcran {
 

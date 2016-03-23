@@ -18,8 +18,8 @@ import java.util.LinkedList;
 
 /**
  * This Class is used to create the Primary Window
- * @author GMA
- * @version 0.1
+ * @author Gowy
+ * @version 1.0
  */
 public class EcranPrincipal {
 
@@ -102,7 +102,7 @@ public class EcranPrincipal {
     protected void createContents() {
         shell = new Shell();
         shell.setSize(1024, 650);
-        shell.setText("ToolBox TD");
+        shell.setText("GMToolsTD");
         shell.setLayout(new GridLayout());
 
 
@@ -142,7 +142,7 @@ public class EcranPrincipal {
         mntmAbout.setText("About");
 
 
-        /* création des éléments de l'écran principal */
+        /* Creation main screen elements */
         pageComposite = new Composite(shell, SWT.NONE);
         pageComposite.setLayout(new GridLayout(2,false));
         gridData = new GridData();
@@ -154,7 +154,7 @@ public class EcranPrincipal {
 
 
         grpConnexion = new Group(pageComposite, SWT.NONE );
-        grpConnexion.setText("Connexion");
+        grpConnexion.setText("Connection");
         grpConnexion.setLayout(new GridLayout(2,false));
         gridData = new GridData();
         gridData.heightHint = 110;
@@ -509,7 +509,7 @@ public class EcranPrincipal {
 
                 tdConnect.deconnexion();
                 tdConnect = null;
-                majInformation(MESSAGE_INFORMATION,nomModuleConnexion,"Deconnexion");
+                majInformation(MESSAGE_INFORMATION,nomModuleConnexion,"Disconnection");
 
                 Display.getDefault().asyncExec(new Runnable() {
                     public void run() {

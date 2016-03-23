@@ -12,8 +12,8 @@ import java.io.IOException;
 
 /**
  * This Class is used to create the Config screen
- * @author GMA
- * @version 0.1
+ * @author Gowy
+ * @version 1.0
  */
 public class EcranConfig extends ModelEcran implements InterfaceEcran {
 

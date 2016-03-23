@@ -5,8 +5,8 @@ import java.util.Properties;
 
 /**
  * This Class is used to configure the application
- * @author GMA
- * @version 0.1
+ * @author Gowy
+ * @version 1.0
  */
 public class Config {
 

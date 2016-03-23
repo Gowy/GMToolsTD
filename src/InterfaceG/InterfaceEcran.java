@@ -2,8 +2,8 @@ package InterfaceG;
 
 /**
  * This Interface is used to implements primary method on each screen
- * @author GMA
- * @version 0.1
+ * @author Gowy
+ * @version 1.0
  */
 public interface InterfaceEcran {
 

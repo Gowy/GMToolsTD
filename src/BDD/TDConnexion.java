@@ -8,8 +8,8 @@ import java.util.List;
 
 /**
  * This Class is used to manage Teradata Connexion
- * @author GMA
- * @version 0.1
+ * @author Gowy
+ * @version 1.0
  */
 public class TDConnexion {
 
@@ -184,7 +184,7 @@ public class TDConnexion {
         UserTDInfo result = null;
         ResultSet rs = null;
         String base = config.getValueConf(config.V_USERS);
-        String message = "";
+
         try {
             String query="select \n" +
                     "username as CompteTD\n" +
@@ -295,7 +295,7 @@ public class TDConnexion {
             }
         }
 
-        if (result.size() < 1) { throw new SQLException("User ["+user+"] doesn't have 'Role Fonctionnel'"); }
+        if (result.size() < 1) { throw new SQLException("User ["+user+"] doesn't have functional role'"); }
 
         return result;
     }
@@ -315,7 +315,7 @@ public class TDConnexion {
             String query="select \n" +
                     "LEC.LabGroup\n" +
                     ",LEC.Lab\n" +
-                    ",case when ECR.accessright is null then 'Lecture' else 'Lecture et Ecriture' end as Droits\n" +
+                    ",case when ECR.accessright is null then 'Read' else 'Read and Write' end as Droits\n" +
                     "from (\n" +
                     "select listlab.LabGroup, listlab.Lab, src.accessright \n"+
                     "from "+baseAR+" src \n"+
@@ -357,7 +357,7 @@ public class TDConnexion {
             }
         }
 
-        if (result.size() < 1) { throw new SQLException("User ["+user+"] doesn't have right on 'Labs'"); }
+        if (result.size() < 1) { throw new SQLException("User ["+user+"] doesn't have right on Labs"); }
 
         return result;
     }

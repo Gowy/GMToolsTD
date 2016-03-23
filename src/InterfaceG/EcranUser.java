@@ -17,8 +17,8 @@ import java.util.List;
 
 /**
  * This Class is used to create the User screen
- * @author GMA
- * @version 0.1
+ * @author Gowy
+ * @version 1.0
  */
 public class EcranUser extends ModelEcran implements InterfaceEcran {
 
@@ -253,7 +253,7 @@ public class EcranUser extends ModelEcran implements InterfaceEcran {
         compUserRoleF.setLayoutData(gridData);
 
         Text textUserRoleFTitre = new Text(compUserRoleF, SWT.CENTER | SWT.READ_ONLY);
-        textUserRoleFTitre.setText("Role Fonctionnel");
+        textUserRoleFTitre.setText("Functional Role");
         gridData = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
         textUserRoleFTitre.setLayoutData(gridData);
 
@@ -272,7 +272,7 @@ public class EcranUser extends ModelEcran implements InterfaceEcran {
         compUserLabs.setLayoutData(gridData);
 
         Text textUserLabsTitreGroupe = new Text(compUserLabs, SWT.CENTER | SWT.READ_ONLY);
-        textUserLabsTitreGroupe.setText("Groupe");
+        textUserLabsTitreGroupe.setText("Group");
         gridData = new GridData(SWT.CENTER, SWT.TOP, true, false, 1, 1);
         gridData.widthHint = 150;
         textUserLabsTitreGroupe.setLayoutData(gridData);
@@ -284,7 +284,7 @@ public class EcranUser extends ModelEcran implements InterfaceEcran {
         textUserLabsTitreLab.setLayoutData(gridData);
 
         Text textUserLabsTitreDroit = new Text(compUserLabs, SWT.CENTER | SWT.READ_ONLY);
-        textUserLabsTitreDroit.setText("Droit");
+        textUserLabsTitreDroit.setText("Rights");
         gridData = new GridData(SWT.CENTER, SWT.TOP, true, false, 1, 1);
         gridData.widthHint = 150;
         textUserLabsTitreDroit.setLayoutData(gridData);
@@ -406,10 +406,7 @@ public class EcranUser extends ModelEcran implements InterfaceEcran {
                                     // group roles (groupUserRole)
                                     int tmp = listRole.size();
 
-                                    if (tmp < 1) {
-                                        // on gère une liste vide ?
-                                        System.out.println("La liste des roles est vide !");
-                                    } else {
+                                    if (tmp >= 1) {
 
                                         if (ScrollCompRole == null || ScrollCompRole.isDisposed()) {
 
@@ -459,9 +456,6 @@ public class EcranUser extends ModelEcran implements InterfaceEcran {
                                     int tmp = listLabs.size();
 
                                     if (tmp >= 1) {
-                                        // on gère une liste vide ? (tmp < 1)
-                                        //System.out.println("La liste des labs est vide !");
-                                 //   } else {
 
                                         if (ScrollCompLabs == null || ScrollCompLabs.isDisposed()) {
 

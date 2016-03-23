@@ -2,8 +2,8 @@ package BDD;
 
 /**
  * This Class is used to manage profile information
- * @author GMA
- * @version 0.1
+ * @author Gowy
+ * @version 1.0
  */
 public class ProfileInfo {
 
